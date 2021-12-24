@@ -40,8 +40,8 @@ android {
 }
 
 dependencies {
-    implementation(project(":walletconnectv2"))
-//    implementation("com.github.walletconnect-labs.walletconnectkotlinv2:walletconnectkotlinv2:1.0.0-alpha01")
+//    implementation(project(":walletconnectv2"))
+    implementation("com.github.WalletConnect:WalletConnectKotlinV2:1.0.0-beta01")
 
     coroutines()
     navigationComponent()

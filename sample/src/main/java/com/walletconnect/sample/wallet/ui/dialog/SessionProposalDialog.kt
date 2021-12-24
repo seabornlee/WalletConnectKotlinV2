@@ -28,16 +28,11 @@ class SessionProposalDialog(
         name.text = proposal.name
         uri.text = proposal.url
         description.text = proposal.description
-        var chainsString = ""
-        proposal.chains.forEach {
-            chainsString += "$it\n"
-        }
+
+        val chainsString = proposal.chains.joinToString(separator = "\n") { it }
         chains.text = chainsString
 
-        var methodsString = ""
-        proposal.methods.forEach {
-            methodsString += "$it\n"
-        }
+        val methodsString = proposal.methods.joinToString(separator = "\n") { it }
         methods.text = methodsString
 
         approve.setOnClickListener {

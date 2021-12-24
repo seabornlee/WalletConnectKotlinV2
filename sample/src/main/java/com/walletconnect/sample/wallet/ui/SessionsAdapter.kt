@@ -2,45 +2,39 @@ package com.walletconnect.sample.wallet.ui
 
 import android.net.Uri
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.walletconnect.sample.R
 import com.walletconnect.sample.databinding.SessionItemBinding
-import com.walletconnect.sample.wallet.SessionActionListener
 import com.walletconnect.walletconnectv2.client.WalletConnectClientData
 
-class SessionsAdapter(private val listener: SessionActionListener) : RecyclerView.Adapter<SessionsAdapter.SessionViewHolder>() {
-    private var sessions: List<WalletConnectClientData.SettledSession> = listOf()
+class SessionsAdapter(
+    private val disconnect: (String) -> Unit,
+    private val update: (WalletConnectClientData.SettledSession) -> Unit,
+    private val upgrade: (WalletConnectClientData.SettledSession) -> Unit,
+    private val ping: (WalletConnectClientData.SettledSession) -> Unit,
+    private val showSessionDetails: (WalletConnectClientData.SettledSession) -> Unit
+) : ListAdapter<WalletConnectClientData.SettledSession, SessionsAdapter.SessionViewHolder>(DIFF_UTIL) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SessionViewHolder =
-        SessionViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.session_item, parent, false), listener)
+        SessionViewHolder(SessionItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
 
     override fun onBindViewHolder(holder: SessionViewHolder, position: Int) {
-        holder.bind(sessions[position])
+        holder.bind(getItem(position))
     }
 
-    override fun getItemCount(): Int = sessions.size
-
-    fun updateList(sessions: List<WalletConnectClientData.SettledSession>) {
-        this.sessions = sessions
-        notifyDataSetChanged()
-    }
-
-
-    inner class SessionViewHolder(private val view: View, private val listener: SessionActionListener) : RecyclerView.ViewHolder(view) {
-
-        private val binding = SessionItemBinding.bind(view)
+    inner class SessionViewHolder(private val binding: SessionItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(session: WalletConnectClientData.SettledSession) = with(binding) {
-
-            view.setOnClickListener {
-                listener.onSessionsDetails(session)
+            root.setOnClickListener {
+                showSessionDetails(session)
             }
 
-            Glide.with(view.context)
+            Glide.with(root.context)
                 .load(Uri.parse(session.peerAppMetaData?.icons?.first()))
                 .into(icon)
 
@@ -48,20 +42,28 @@ class SessionsAdapter(private val listener: SessionActionListener) : RecyclerVie
             uri.text = session.peerAppMetaData?.url
 
             menu.setOnClickListener {
-                with(PopupMenu(view.context, menu)) {
+                with(PopupMenu(root.context, menu)) {
                     menuInflater.inflate(R.menu.session_menu, menu)
                     setOnMenuItemClickListener { item ->
                         when (item.itemId) {
-                            R.id.disconnect -> listener.onDisconnect(session)
-                            R.id.update -> listener.onUpdate(session)
-                            R.id.upgrade -> listener.onUpgrade(session)
-                            R.id.ping -> listener.onPing(session)
+                            R.id.disconnect -> disconnect(session.topic)
+                            R.id.update -> update(session)
+                            R.id.upgrade -> upgrade(session)
+                            R.id.ping -> ping(session)
                         }
                         true
                     }
                     show()
                 }
             }
+        }
+    }
+
+    private companion object {
+        val DIFF_UTIL = object : DiffUtil.ItemCallback<WalletConnectClientData.SettledSession>() {
+            override fun areItemsTheSame(oldItem: WalletConnectClientData.SettledSession, newItem: WalletConnectClientData.SettledSession): Boolean = oldItem == newItem
+
+            override fun areContentsTheSame(oldItem: WalletConnectClientData.SettledSession, newItem: WalletConnectClientData.SettledSession): Boolean = oldItem == newItem
         }
     }
 }

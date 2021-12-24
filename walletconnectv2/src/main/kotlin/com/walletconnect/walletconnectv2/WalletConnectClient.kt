@@ -1,16 +1,16 @@
 package com.walletconnect.walletconnectv2
 
-import com.walletconnect.walletconnectv2.common.*
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import com.walletconnect.walletconnectv2.client.ClientTypes
 import com.walletconnect.walletconnectv2.client.WalletConnectClientData
 import com.walletconnect.walletconnectv2.client.WalletConnectClientListener
 import com.walletconnect.walletconnectv2.client.WalletConnectClientListeners
+import com.walletconnect.walletconnectv2.common.*
 import com.walletconnect.walletconnectv2.engine.EngineInteractor
 import com.walletconnect.walletconnectv2.engine.model.EngineData
 import com.walletconnect.walletconnectv2.engine.sequence.SequenceLifecycle
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 object WalletConnectClient {
     private val engineInteractor = EngineInteractor()
@@ -18,7 +18,7 @@ object WalletConnectClient {
     fun initialize(initialParams: ClientTypes.InitialParams) = with(initialParams) {
         // TODO: pass properties to DI framework
         app = application
-        val engineFactory = com.walletconnect.walletconnectv2.engine.EngineInteractor.EngineFactory(useTls, hostName, projectId, isController, application, metadata)
+        val engineFactory = EngineInteractor.EngineFactory(useTls, hostName, projectId, isController, application, metadata)
         engineInteractor.initialize(engineFactory)
     }
 
