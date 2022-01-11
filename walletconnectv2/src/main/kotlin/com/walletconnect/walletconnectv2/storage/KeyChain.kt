@@ -1,27 +1,13 @@
 package com.walletconnect.walletconnectv2.storage
 
 import android.content.SharedPreferences
-import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
-import com.walletconnect.walletconnectv2.app
 import com.walletconnect.walletconnectv2.crypto.data.Key
 import com.walletconnect.walletconnectv2.util.Empty
 import com.walletconnect.walletconnectv2.util.bytesToHex
 import com.walletconnect.walletconnectv2.util.hexToBytes
 
-class KeyChain : KeyStore {
-
-    //Region: Move to DI
-    // TODO: updated based on https://stackoverflow.com/a/63357267
-    private val sharedPreferences: SharedPreferences
-        get() = EncryptedSharedPreferences.create(
-            sharedPrefsFile,
-            mainKeyAlias,
-            app.applicationContext,
-            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-        )
-    //End of region
+class KeyChain(private val sharedPreferences: SharedPreferences) : KeyStore {
 
     override fun setKey(tag: String, key1: Key, key2: Key) {
         val keys = concatKeys(key1, key2)

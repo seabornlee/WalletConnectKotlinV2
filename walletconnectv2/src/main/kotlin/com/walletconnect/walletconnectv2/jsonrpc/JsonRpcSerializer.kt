@@ -1,5 +1,6 @@
 package com.walletconnect.walletconnectv2.jsonrpc
 
+import com.squareup.moshi.Moshi
 import com.walletconnect.walletconnectv2.ClientParams
 import com.walletconnect.walletconnectv2.clientsync.ClientSyncJsonRpc
 import com.walletconnect.walletconnectv2.clientsync.pairing.after.PostSettlementPairing
@@ -7,22 +8,18 @@ import com.walletconnect.walletconnectv2.clientsync.pairing.before.PreSettlement
 import com.walletconnect.walletconnectv2.clientsync.session.after.PostSettlementSession
 import com.walletconnect.walletconnectv2.clientsync.session.before.PreSettlementSession
 import com.walletconnect.walletconnectv2.common.Topic
+import com.walletconnect.walletconnectv2.crypto.Codec
 import com.walletconnect.walletconnectv2.crypto.CryptoManager
-import com.walletconnect.walletconnectv2.crypto.codec.AuthenticatedEncryptionCodec
 import com.walletconnect.walletconnectv2.crypto.data.EncryptionPayload
 import com.walletconnect.walletconnectv2.crypto.data.PublicKey
 import com.walletconnect.walletconnectv2.crypto.data.SharedKey
-import com.walletconnect.walletconnectv2.crypto.managers.BouncyCastleCryptoManager
+import com.walletconnect.walletconnectv2.di.DIComponent
 import com.walletconnect.walletconnectv2.jsonrpc.model.JsonRpcResponse
 import com.walletconnect.walletconnectv2.jsonrpc.utils.JsonRpcMethod
-import com.walletconnect.walletconnectv2.moshi
 import com.walletconnect.walletconnectv2.util.Empty
 import com.walletconnect.walletconnectv2.util.hexToUtf8
 
-class JsonRpcSerializer {
-
-    private val codec: AuthenticatedEncryptionCodec = AuthenticatedEncryptionCodec()
-    private val crypto: CryptoManager = BouncyCastleCryptoManager()
+class JsonRpcSerializer(private val codec: Codec, private val crypto: CryptoManager, val moshi: Moshi) : DIComponent {
 
     fun serialize(payload: ClientSyncJsonRpc, topic: Topic): String {
         val json = serialize(payload)
