@@ -1,6 +1,5 @@
 package com.walletconnect.walletconnectv2.engine
 
-import android.app.Application
 import com.walletconnect.walletconnectv2.clientsync.pairing.Pairing
 import com.walletconnect.walletconnectv2.clientsync.pairing.SettledPairingSequence
 import com.walletconnect.walletconnectv2.clientsync.pairing.after.PostSettlementPairing
@@ -21,7 +20,6 @@ import com.walletconnect.walletconnectv2.common.*
 import com.walletconnect.walletconnectv2.crypto.CryptoManager
 import com.walletconnect.walletconnectv2.crypto.data.PublicKey
 import com.walletconnect.walletconnectv2.crypto.data.SharedKey
-import com.walletconnect.walletconnectv2.di.DIComponent
 import com.walletconnect.walletconnectv2.engine.model.EngineData
 import com.walletconnect.walletconnectv2.engine.sequence.SequenceLifecycle
 import com.walletconnect.walletconnectv2.jsonrpc.model.JsonRpcResponse
@@ -44,11 +42,11 @@ internal class EngineInteractor(
     private val storageRepository: StorageRepository,
     private val metaData: AppMetaData,
     private val controllerType: ControllerType
-) : DIComponent {
+) {
     private val _sequenceEvent: MutableStateFlow<SequenceLifecycle> = MutableStateFlow(SequenceLifecycle.Default)
     val sequenceEvent: StateFlow<SequenceLifecycle> = _sequenceEvent
 
-    internal fun initialize(engine: EngineFactory) = with(engine) {
+    init {
         collectClientSyncJsonRpc()
 
         relayer.isConnectionOpened
@@ -60,6 +58,9 @@ internal class EngineInteractor(
                 }
             }
             .launchIn(scope)
+    }
+
+    internal fun initialize() {
     }
 
     internal fun pair(uri: String, onSuccess: (String) -> Unit, onFailure: (Throwable) -> Unit) {
@@ -433,6 +434,7 @@ internal class EngineInteractor(
         sessionState: SessionState
     ): SettledSessionSequence {
         val (sharedKey, topic) = crypto.generateTopicAndSharedKey(selfPublicKey, peerPublicKey)
+
         return SettledSessionSequence(
             topic,
             relay,
@@ -444,13 +446,4 @@ internal class EngineInteractor(
             sessionState
         )
     }
-
-    class EngineFactory(
-        val useTLs: Boolean = false,
-        val hostName: String,
-        val projectId: String,
-        val isController: Boolean,
-        val application: Application,
-        val metaData: AppMetaData
-    )
 }

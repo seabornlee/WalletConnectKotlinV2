@@ -3,7 +3,6 @@ package com.walletconnect.walletconnectv2.relay.waku
 import com.tinder.scarlet.WebSocket
 import com.walletconnect.walletconnectv2.common.SubscriptionId
 import com.walletconnect.walletconnectv2.common.Topic
-import com.walletconnect.walletconnectv2.di.DIComponent
 import com.walletconnect.walletconnectv2.scope
 import com.walletconnect.walletconnectv2.util.Logger
 import com.walletconnect.walletconnectv2.util.generateId
@@ -12,7 +11,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 
-class WakuNetworkRepository(private val relayService: RelayService) : DIComponent {
+class WakuNetworkRepository(private val relayService: RelayService) {
     internal val eventsFlow: SharedFlow<WebSocket.Event> = relayService.eventsFlow().shareIn(scope, SharingStarted.Lazily, REPLAY)
     internal val observePublishAcknowledgement: Flow<Relay.Publish.Acknowledgement> = relayService.observePublishAcknowledgement()
 

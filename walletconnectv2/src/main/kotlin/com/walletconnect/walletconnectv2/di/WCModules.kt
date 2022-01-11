@@ -44,7 +44,7 @@ import org.walletconnect.walletconnectv2.storage.data.dao.PairingDao
 import org.walletconnect.walletconnectv2.storage.data.dao.SessionDao
 import java.util.concurrent.TimeUnit
 
-internal fun wcModule() = module(createdAtStart = false) {
+internal fun wcModule() = module {
 
     single<PolymorphicJsonAdapterFactory<JsonRpcResponse>> {
         PolymorphicJsonAdapterFactory.of(JsonRpcResponse::class.java, "type")
@@ -70,7 +70,7 @@ internal fun wcModule() = module(createdAtStart = false) {
     }
 }
 
-internal fun networkRepositoryModule(useTls: Boolean, hostName: String, projectId: String) = module(createdAtStart = false) {
+internal fun networkRepositoryModule(useTls: Boolean, hostName: String, projectId: String) = module {
 
     single(named("serverUrl")) {
         ((if (useTls) "wss" else "ws") + "://$hostName/?projectId=$projectId").trim()
@@ -106,7 +106,7 @@ internal fun networkRepositoryModule(useTls: Boolean, hostName: String, projectI
     single { WakuNetworkRepository(get()) }
 }
 
-internal fun relayerModule() = module(createdAtStart = false) {
+internal fun relayerModule() = module {
 
     single(named("rpcStore")) {
         EncryptedSharedPreferences.create(
@@ -125,14 +125,14 @@ internal fun relayerModule() = module(createdAtStart = false) {
     single { WalletConnectRelayer(get(), get(), get()) }
 }
 
-internal fun cryptoModule() = module(createdAtStart = false) {
+internal fun cryptoModule() = module {
 
     single<Codec> { AuthenticatedEncryptionCodec() }
 
     single<CryptoManager> { BouncyCastleCryptoManager(get()) }
 }
 
-internal fun storageModule() = module(createdAtStart = false) {
+internal fun storageModule() = module {
 
     single(named("keyStore")) {
         EncryptedSharedPreferences.create(

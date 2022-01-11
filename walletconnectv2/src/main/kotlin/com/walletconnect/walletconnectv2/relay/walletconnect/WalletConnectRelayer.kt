@@ -4,7 +4,6 @@ import com.tinder.scarlet.WebSocket
 import com.walletconnect.walletconnectv2.clientsync.ClientSyncJsonRpc
 import com.walletconnect.walletconnectv2.common.SubscriptionId
 import com.walletconnect.walletconnectv2.common.Topic
-import com.walletconnect.walletconnectv2.di.DIComponent
 import com.walletconnect.walletconnectv2.errors.exception
 import com.walletconnect.walletconnectv2.jsonrpc.JsonRpcSerializer
 import com.walletconnect.walletconnectv2.jsonrpc.history.JsonRpcHistory
@@ -21,7 +20,11 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 
-class WalletConnectRelayer(private val networkRepository: WakuNetworkRepository, private val serializer: JsonRpcSerializer, private val jsonRpcHistory: JsonRpcHistory) : DIComponent {
+class WalletConnectRelayer(
+    private val networkRepository: WakuNetworkRepository,
+    private val serializer: JsonRpcSerializer,
+    private val jsonRpcHistory: JsonRpcHistory
+) {
     private val _clientSyncJsonRpc: MutableSharedFlow<WCRequestSubscriptionPayload> = MutableSharedFlow()
     val clientSyncJsonRpc: SharedFlow<WCRequestSubscriptionPayload> = _clientSyncJsonRpc
 

@@ -13,13 +13,12 @@ import com.walletconnect.walletconnectv2.crypto.CryptoManager
 import com.walletconnect.walletconnectv2.crypto.data.EncryptionPayload
 import com.walletconnect.walletconnectv2.crypto.data.PublicKey
 import com.walletconnect.walletconnectv2.crypto.data.SharedKey
-import com.walletconnect.walletconnectv2.di.DIComponent
 import com.walletconnect.walletconnectv2.jsonrpc.model.JsonRpcResponse
 import com.walletconnect.walletconnectv2.jsonrpc.utils.JsonRpcMethod
 import com.walletconnect.walletconnectv2.util.Empty
 import com.walletconnect.walletconnectv2.util.hexToUtf8
 
-class JsonRpcSerializer(private val codec: Codec, private val crypto: CryptoManager, val moshi: Moshi) : DIComponent {
+class JsonRpcSerializer(private val codec: Codec, private val crypto: CryptoManager, val moshi: Moshi) {
 
     fun serialize(payload: ClientSyncJsonRpc, topic: Topic): String {
         val json = serialize(payload)

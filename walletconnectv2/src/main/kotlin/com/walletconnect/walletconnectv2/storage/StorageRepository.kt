@@ -4,12 +4,11 @@ import com.squareup.sqldelight.runtime.coroutines.*
 import com.walletconnect.walletconnectv2.Database
 import com.walletconnect.walletconnectv2.clientsync.session.Session
 import com.walletconnect.walletconnectv2.common.*
-import com.walletconnect.walletconnectv2.di.DIComponent
 import com.walletconnect.walletconnectv2.storage.data.vo.AppMetaDataVO
 import com.walletconnect.walletconnectv2.storage.data.vo.PairingVO
 import com.walletconnect.walletconnectv2.storage.data.vo.SessionVO
 
-internal class StorageRepository constructor(private val sessionDatabase: Database) : DIComponent {
+internal class StorageRepository constructor(private val sessionDatabase: Database) {
 
     fun getListOfPairingVOs() =
         sessionDatabase.pairingDaoQueries.getListOfPairingDaos(mapper = this@StorageRepository::mapPairingDaoToPairingVO).executeAsList()

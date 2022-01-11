@@ -3,10 +3,9 @@ package com.walletconnect.walletconnectv2.jsonrpc.history
 import android.annotation.SuppressLint
 import android.content.SharedPreferences
 import com.walletconnect.walletconnectv2.common.Topic
-import com.walletconnect.walletconnectv2.di.DIComponent
 import com.walletconnect.walletconnectv2.util.Logger
 
-class JsonRpcHistory(private val sharedPreferences: SharedPreferences) : DIComponent {
+class JsonRpcHistory(private val sharedPreferences: SharedPreferences) {
 
     @SuppressLint("ApplySharedPref")
     fun setRequest(requestId: Long, topic: Topic): Boolean {

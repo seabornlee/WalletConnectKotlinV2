@@ -1,12 +1,10 @@
 package com.walletconnect.walletconnectv2.crypto.managers
 
-
 import com.walletconnect.walletconnectv2.common.Topic
 import com.walletconnect.walletconnectv2.crypto.CryptoManager
 import com.walletconnect.walletconnectv2.crypto.data.PrivateKey
 import com.walletconnect.walletconnectv2.crypto.data.PublicKey
 import com.walletconnect.walletconnectv2.crypto.data.SharedKey
-import com.walletconnect.walletconnectv2.di.DIComponent
 import com.walletconnect.walletconnectv2.storage.KeyStore
 import com.walletconnect.walletconnectv2.util.bytesToHex
 import com.walletconnect.walletconnectv2.util.hexToBytes
@@ -15,7 +13,7 @@ import java.security.MessageDigest
 import java.security.SecureRandom
 import com.walletconnect.walletconnectv2.crypto.data.Key as WCKey
 
-class BouncyCastleCryptoManager(private val keyChain: KeyStore) : CryptoManager, DIComponent {
+class BouncyCastleCryptoManager(private val keyChain: KeyStore) : CryptoManager {
 
     override fun generateKeyPair(): PublicKey {
         val publicKey = ByteArray(KEY_SIZE)

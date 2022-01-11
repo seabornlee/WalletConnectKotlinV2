@@ -6,6 +6,6 @@ import org.koin.core.component.KoinComponent
 
 internal lateinit var wcKoinApp: KoinApplication
 
-interface DIComponent: KoinComponent {
+internal interface DIComponent: KoinComponent {
     override fun getKoin(): Koin = wcKoinApp.koin
 }

@@ -30,9 +30,6 @@ object WalletConnectClient : DIComponent {
             modules(storageModule())
             modules(engineModule(isController, metadata))
         }
-
-        val engineFactory = EngineInteractor.EngineFactory(useTls, hostName, projectId, isController, application, metadata)
-        engineInteractor.initialize(engineFactory)
     }
 
     fun setWalletConnectListener(walletConnectListener: WalletConnectClientListener) {
@@ -148,6 +145,6 @@ object WalletConnectClient : DIComponent {
 
     fun shutdown() {
         scope.cancel()
-        wcKoinApp?.koin?.close()
+        wcKoinApp.koin.close()
     }
 }
