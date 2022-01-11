@@ -90,7 +90,7 @@ afterEvaluate {
                 // You can then customize attributes of the publication as shown below.
                 groupId = "com.walletconnect"
                 artifactId = "walletconnectv2"
-                version = "1.0.0-alpha01"
+                version = "1.0.0-beta01-dagger"
             }
         }
     }

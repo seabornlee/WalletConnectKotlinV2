@@ -6,9 +6,7 @@ import com.walletconnect.walletconnectv2.common.Topic
 import com.walletconnect.walletconnectv2.util.Logger
 import javax.inject.Inject
 import javax.inject.Named
-import javax.inject.Singleton
 
-@Singleton
 class JsonRpcHistory @Inject constructor(@Named("rpcStore") private val sharedPreferences: SharedPreferences) {
 
     @SuppressLint("ApplySharedPref")

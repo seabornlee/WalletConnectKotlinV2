@@ -8,9 +8,7 @@ import com.walletconnect.walletconnectv2.storage.data.vo.AppMetaDataVO
 import com.walletconnect.walletconnectv2.storage.data.vo.PairingVO
 import com.walletconnect.walletconnectv2.storage.data.vo.SessionVO
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
 internal class StorageRepository @Inject constructor(private val sessionDatabase: Database) {
 
     fun getListOfPairingVOs() =

@@ -11,9 +11,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
 class WakuNetworkRepository @Inject constructor(private val relayService: RelayService) {
     internal val eventsFlow: SharedFlow<WebSocket.Event> = relayService.eventsFlow().shareIn(scope, SharingStarted.Lazily, REPLAY)
     internal val observePublishAcknowledgement: Flow<Relay.Publish.Acknowledgement> = relayService.observePublishAcknowledgement()

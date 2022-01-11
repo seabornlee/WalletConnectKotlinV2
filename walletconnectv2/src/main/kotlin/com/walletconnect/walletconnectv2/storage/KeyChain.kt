@@ -7,9 +7,7 @@ import com.walletconnect.walletconnectv2.util.bytesToHex
 import com.walletconnect.walletconnectv2.util.hexToBytes
 import javax.inject.Inject
 import javax.inject.Named
-import javax.inject.Singleton
 
-@Singleton
 class KeyChain @Inject constructor(@Named("keyStore") private val sharedPreferences: SharedPreferences) : KeyStore {
 
     override fun setKey(tag: String, key1: Key, key2: Key) {
