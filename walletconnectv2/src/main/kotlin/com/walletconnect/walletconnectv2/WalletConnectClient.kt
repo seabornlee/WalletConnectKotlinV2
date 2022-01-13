@@ -1,25 +1,34 @@
 package com.walletconnect.walletconnectv2
 
-import com.walletconnect.walletconnectv2.common.*
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import com.walletconnect.walletconnectv2.client.ClientTypes
 import com.walletconnect.walletconnectv2.client.WalletConnectClientData
 import com.walletconnect.walletconnectv2.client.WalletConnectClientListener
 import com.walletconnect.walletconnectv2.client.WalletConnectClientListeners
+import com.walletconnect.walletconnectv2.common.*
+import com.walletconnect.walletconnectv2.di.*
 import com.walletconnect.walletconnectv2.engine.EngineInteractor
 import com.walletconnect.walletconnectv2.engine.model.EngineData
 import com.walletconnect.walletconnectv2.engine.sequence.SequenceLifecycle
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import org.kodein.di.*
 
 object WalletConnectClient {
-    private val engineInteractor = EngineInteractor()
+    private val di = LateInitDI()
+    private val engineInteractor: EngineInteractor by di.instance()
 
     fun initialize(initialParams: ClientTypes.InitialParams) = with(initialParams) {
-        // TODO: pass properties to DI framework
-        app = application
-        val engineFactory = com.walletconnect.walletconnectv2.engine.EngineInteractor.EngineFactory(useTls, hostName, projectId, isController, application, metadata)
-        engineInteractor.initialize(engineFactory)
+        // TODO: add logic to check hostName for ws/wss scheme with and without ://
+
+        di.baseDI = DI {
+            bindConstant(tag = Tags.SERVER_URL) { ((if (useTls) "wss" else "ws") + "://${hostName}/?projectId=${projectId}").trim() }
+            bindSingleton(tag = Tags.APPLICATION) { application }
+            bindProvider(tag = Tags.METADATA) { metadata }
+            bindConstant(tag = Tags.CONTROLLER_TYPE) { if (isController) ControllerType.CONTROLLER else ControllerType.NON_CONTROLLER }
+
+            importAll(wcModule, networkRepositoryModule, relayerModule, cryptoModule, storageModule, engineModule)
+        }
     }
 
     fun setWalletConnectListener(walletConnectListener: WalletConnectClientListener) {

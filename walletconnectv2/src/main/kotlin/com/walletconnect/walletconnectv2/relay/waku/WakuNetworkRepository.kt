@@ -1,52 +1,17 @@
 package com.walletconnect.walletconnectv2.relay.waku
 
-import android.app.Application
-import com.tinder.scarlet.Scarlet
 import com.tinder.scarlet.WebSocket
-import com.tinder.scarlet.lifecycle.android.AndroidLifecycle
-import com.tinder.scarlet.messageadapter.moshi.MoshiMessageAdapter
-import com.tinder.scarlet.retry.LinearBackoffStrategy
-import com.tinder.scarlet.websocket.okhttp.newWebSocketFactory
+import com.walletconnect.walletconnectv2.common.SubscriptionId
+import com.walletconnect.walletconnectv2.common.Topic
+import com.walletconnect.walletconnectv2.scope
+import com.walletconnect.walletconnectv2.util.Logger
+import com.walletconnect.walletconnectv2.util.generateId
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
-import okhttp3.OkHttpClient
-import com.walletconnect.walletconnectv2.common.SubscriptionId
-import com.walletconnect.walletconnectv2.common.Topic
-import com.walletconnect.walletconnectv2.moshi
-import com.walletconnect.walletconnectv2.scope
-import com.walletconnect.walletconnectv2.util.Logger
-import com.walletconnect.walletconnectv2.util.adapters.FlowStreamAdapter
-import com.walletconnect.walletconnectv2.util.generateId
-import java.util.concurrent.TimeUnit
 
-class WakuNetworkRepository internal constructor(
-    private val useTLs: Boolean,
-    private val hostName: String,
-    private val projectId: String,
-    private val application: Application
-) {
-    //region Move to DI module
-    private val okHttpClient = OkHttpClient.Builder()
-        .writeTimeout(TIMEOUT_TIME, TimeUnit.MILLISECONDS)
-        .readTimeout(TIMEOUT_TIME, TimeUnit.MILLISECONDS)
-        .callTimeout(TIMEOUT_TIME, TimeUnit.MILLISECONDS)
-        .connectTimeout(TIMEOUT_TIME, TimeUnit.MILLISECONDS)
-        .build()
-
-    private val scarlet by lazy {
-        Scarlet.Builder()
-            .backoffStrategy(LinearBackoffStrategy(TimeUnit.MINUTES.toMillis(DEFAULT_BACKOFF_MINUTES)))
-            .webSocketFactory(okHttpClient.newWebSocketFactory(getServerUrl()))
-            .lifecycle(AndroidLifecycle.ofApplicationForeground(application)) // TODO: Maybe have debug version of scarlet w/o application and release version of scarlet w/ application once DI is setup
-            .addMessageAdapterFactory(MoshiMessageAdapter.Factory(moshi))
-            .addStreamAdapterFactory(FlowStreamAdapter.Factory())
-            .build()
-    }
-    private val relay: RelayService by lazy { scarlet.create(RelayService::class.java) }
-    //endregion
-
+internal class WakuNetworkRepository constructor(private val relay: RelayService) {
     internal val eventsFlow: SharedFlow<WebSocket.Event> = relay.eventsFlow().shareIn(scope, SharingStarted.Lazily, REPLAY)
     internal val observePublishAcknowledgement: Flow<Relay.Publish.Acknowledgement> = relay.observePublishAcknowledgement()
 
@@ -163,23 +128,7 @@ class WakuNetworkRepository internal constructor(
         }
     }
 
-    private fun getServerUrl(): String =
-        ((if (useTLs) "wss" else "ws") + "://$hostName/?projectId=$projectId").trim()
-
-    class WakuNetworkFactory(
-        val useTls: Boolean,
-        val hostName: String,
-        val projectId: String,
-        val application: Application
-    )
-
     companion object {
-        private const val TIMEOUT_TIME: Long = 5000L
-        private const val DEFAULT_BACKOFF_MINUTES: Long = 5L
         private const val REPLAY: Int = 1
-
-        fun init(wakuNetworkFactory: WakuNetworkFactory) = with(wakuNetworkFactory) {
-            WakuNetworkRepository(useTls, hostName, projectId, application)
-        }
     }
 }

@@ -80,6 +80,13 @@ fun DependencyHandlerScope.sqlDelight() {
     }
 }
 
+fun DependencyHandlerScope.kodein() {
+    val kodeinVersion = "7.10.0"
+
+    "implementation"("org.kodein.di:kodein-di:$kodeinVersion")
+    "implementation"("org.kodein.di:kodein-di-framework-android-core:$kodeinVersion")
+}
+
 fun DependencyHandlerScope.jUnit5() {
     val jUnit5Version = "5.7.2"
 
