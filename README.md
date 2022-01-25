@@ -263,7 +263,7 @@ ping is successful, topic is echo'd in listener.
 &nbsp;
 
 
-## **Daap**
+## **Dapp**
 
 ### **WalletConnectClient.DappDelegate**
 
